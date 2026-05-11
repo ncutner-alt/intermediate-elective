@@ -53,3 +53,13 @@ venoco_water <- read_csv(
 
 ```
 
+# 1. Explaining inspiration
+
+The visualization I chose for my inspiration is Steven Ponce's, "Coal falls. Renewables rise." The visualization uses contrasting line trends, direct labeling, and annotations to tell a story about changing energy dominance through time.
+
+This visualization makes sense for my dataset because I am also examining temporal changes across bird species at NCOS. Similar to the inspiration figure, my visualization will use contrasting abundance trends, annotations, and highlighted lines to emphasize how bird presence changes throughout the water year.
+
+My visualization will display time on the x-axis and bird abundance on the y-axis. Different bird species will be represented using contrasting colored lines, while annotations will highlight important seasonal or ecological patterns in the data.
+
+
+
