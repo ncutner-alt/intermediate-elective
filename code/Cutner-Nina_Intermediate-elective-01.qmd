@@ -42,16 +42,6 @@ birds <- read_csv(
   here("data", "birds copy.csv")
 )
 
-# reading in water quality metadata
-metadata <- read_csv(
-  here("data", "NCOS_YSI_Water_Quality_Monitoring_0 copy.csv")
-)
-
-# reading in Venoco Bridge water surface elevation data
-venoco_water <- read_csv(
-  here("data", "venoco-water copy.csv")
-)
-
 ```
 
 # 1. Explaining inspiration
