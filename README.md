@@ -1,9 +1,9 @@
 # intermediate-elective
-# Week 5, Spring 2026: Aquatic invertebrates
 
 ## General information
 
-This repository contains data and code to explore patterns in Venoco Bridge water surface elevation, birds, and water quality parameters.
+This repository contains data, code, and visualizations for the Intermediate Elective assignment for Spring 2026. The project explores long-term bird abundance trends at NCOS (North Campus Open Space) between 2017 and 2025 using a visualization inspired by Steven Ponce’s “Coal falls. Renewables rise.”
+
 To work with the code in this repository, you will need the following packages:
 
 ```
@@ -11,7 +11,7 @@ library(tidyverse)
 library(janitor)
 library(here)
 library(lubridate)
-library(patchwork)
+library(ggtext)
 ```
 
 ## Data and file information
@@ -19,13 +19,14 @@ library(patchwork)
 ```
 .
 ├── README.md
-├── code                                          
-│   ├── Cutner-Nina_Intermediate-elective-01.pdf                 
-│   └── Cutner-Nina_Intermediate-elective-01.qmd  
+├── code
+│   ├── Cutner-Nina_Intermediate-elective-01.pdf
+│   └── Cutner-Nina_Intermediate-elective-01.qmd
 ├── data
-│   ├── birds copy.csv     # birds data
-│   └── NCOS_YSI_Water_Quality_Monitoring_0 copy.csv                            # NCOS water quality data
-│   └── venoco-water copy.csv                            # venoco water data
+│   └── birds copy.csv
+├── figures
+│   ├── bird-abundance-trends.png
+│   └── sketch.jpg
 └── intermediate-elective.Rproj
 ```
 
