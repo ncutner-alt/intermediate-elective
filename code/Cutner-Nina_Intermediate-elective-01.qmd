@@ -1,0 +1,55 @@
+---
+title: "Cutner-Nina_Intermediate-elective-01"
+author: "Nina Cutner"
+format: pdf
+date: May 10, 2026
+execute:
+  message: false
+  warning: false
+---
+
+# Set up
+
+## Packages
+
+```{r}
+#| label: packages
+
+# loading packages for data import, cleaning, wrangling, and visualization
+library(tidyverse)
+
+# loading package to clean column names
+library(janitor)
+
+# loading package for file paths
+library(here)
+
+# loading package for working with dates
+library(lubridate)
+
+# loading package for arranging multiple plots or plot elements
+library(patchwork)
+```
+
+## Data
+
+```{r}
+#| label: data
+
+# reading in bird monitoring data
+birds <- read_csv(
+  here("data", "birds copy.csv")
+)
+
+# reading in water quality metadata
+metadata <- read_csv(
+  here("data", "NCOS_YSI_Water_Quality_Monitoring_0 copy.csv")
+)
+
+# reading in Venoco Bridge water surface elevation data
+venoco_water <- read_csv(
+  here("data", "venoco-water copy.csv")
+)
+
+```
+
