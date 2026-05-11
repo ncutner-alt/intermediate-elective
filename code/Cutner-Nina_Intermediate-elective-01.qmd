@@ -27,8 +27,9 @@ library(here)
 # loading package for working with dates
 library(lubridate)
 
-# loading package for arranging multiple plots or plot elements
-library(patchwork)
+# loading package for styled title and subtitle text
+library(ggtext)
+
 ```
 
 ## Data
@@ -57,9 +58,320 @@ venoco_water <- read_csv(
 
 The visualization I chose for my inspiration is Steven Ponce's, "Coal falls. Renewables rise." The visualization uses contrasting line trends, direct labeling, and annotations to tell a story about changing energy dominance through time.
 
-This visualization makes sense for my dataset because I am also examining temporal changes across bird species at NCOS. Similar to the inspiration figure, my visualization will use contrasting abundance trends, annotations, and highlighted lines to emphasize how bird presence changes throughout the water year.
+This visualization makes sense for my dataset because I am also examining temporal changes across bird species at NCOS. Similar to the inspiration figure, my visualization will use changing abundance trends, annotations, and highlighted lines to emphasize how bird presence changes across years.
 
 My visualization will display time on the x-axis and bird abundance on the y-axis. Different bird species will be represented using contrasting colored lines, while annotations will highlight important seasonal or ecological patterns in the data.
 
+# 2. Planning the figure
 
+Below is my initial sketch for the planned visualization layout.
 
+![Initial sketch of visualization](../figures/sketch.jpg){width=80%}
+
+# 3. Coding the figure
+
+```{r}
+#| label: clean-birds
+
+# creating clean bird data frame
+birds_clean <- birds |> 
+  
+  # cleaning column names
+  clean_names() |> 
+  
+  # converting observation date to date format
+  mutate(observation_date = ymd(observation_date),
+         
+         # extracting calendar year from observation date
+         year = year(observation_date)) |> 
+  # removing repeat observations so counts are not duplicated
+  filter(repeat_observation == "No") |>
+  
+  # keeping years with bird survey data
+  filter(year >= 2017,
+         year <= 2025)
+
+# creating vector of focal bird species for final visualization
+focal_species <- c(
+  "Mallard",
+  "Song Sparrow",
+  "Black-crowned Night-Heron"
+)
+
+# summarizing yearly abundance for focal species
+birds_yearly <- birds_clean |>
+  
+  # keeping only selected focal species
+  filter(species %in% focal_species) |>
+  
+  # grouping observations by year and species
+  group_by(year, species) |>
+  
+  # calculating total yearly abundance for each species
+  summarize(total_abundance = sum(count,
+                                  na.rm = TRUE),
+            .groups = "drop") |>
+  
+  # ordering species for consistent plotting
+  mutate(species = factor(species,
+                          levels = focal_species))
+  
+```
+
+```{r}
+#| label: bird-plot
+#| fig-width: 9
+#| fig-height: 6.5
+
+# defining background color to match the inspiration visualization
+bg_color <- "#071A2D"
+
+# defining muted grid line color
+grid_color <- "#17304A"
+
+# defining text colors for title, subtitle, and axes
+text_light <- "#D8E4EE"
+text_muted <- "#8A98A8"
+
+# defining custom colors for each focal bird species
+bird_colors <- c(
+  "Mallard" = "#F4A932",
+  "Song Sparrow" = "#6A80A0",
+  "Black-crowned Night-Heron" = "#E8503A"
+)
+
+# finding the year and abundance when Mallard abundance is highest
+mallard_peak <- birds_yearly |>
+  
+  # keeping only Mallard observations
+  filter(species == "Mallard") |>
+  
+  # keeping the year with the highest abundance
+  slice_max(total_abundance,
+            n = 1)
+
+# creating data frame with final year values for direct labels
+end_labels <- birds_yearly |>
+  
+  # keeping only observations from the final year
+  filter(year == max(year)) |>
+  
+  # creating label text with species name and abundance
+  mutate(label = paste0(species, "\n", total_abundance))
+
+# creating final Ponce-inspired bird abundance visualization
+bird_plot <- ggplot(
+  data = birds_yearly,
+  
+  # mapping year to x-axis, abundance to y-axis, and species to color
+  mapping = aes(
+    x = year,
+    y = total_abundance,
+    color = species,
+    group = species
+  )
+) +
+  
+  # adding horizontal grid lines manually
+  geom_hline(
+    yintercept = seq(0, 600, by = 200),
+    color = grid_color,
+    linewidth = 0.3
+  ) +
+  
+  # adding abundance trend lines
+  geom_line(
+    linewidth = 1.5,
+    alpha = 0.9
+  ) +
+  
+  # adding outlined points at first and last year
+  geom_point(
+    data = birds_yearly |>
+      filter(year %in% c(min(year), max(year))),
+    size = 3.4,
+    shape = 21,
+    fill = bg_color,
+    stroke = 1.6
+  ) +
+  
+  # adding dotted vertical line at Mallard peak
+  annotate(
+    "segment",
+    x = mallard_peak$year,
+    xend = mallard_peak$year,
+    y = 0,
+    yend = mallard_peak$total_abundance - 20,
+    color = bird_colors["Mallard"],
+    linewidth = 0.5,
+    linetype = "dotted"
+  ) +
+  
+  # labeling Mallard peak
+  annotate(
+    "text",
+    x = mallard_peak$year - 0.15,
+    y = mallard_peak$total_abundance - 10,
+    label = paste0(
+      "Mallard peak\n",
+      mallard_peak$year,
+      ": ",
+      mallard_peak$total_abundance
+    ),
+    hjust = 1,
+    size = 3,
+    color = bird_colors["Mallard"],
+    lineheight = 1.1
+  ) +
+  
+  # adding Song Sparrow annotation
+  annotate(
+    "text",
+    x = 2022.6,
+    y = 455,
+    label = "Song Sparrow abundance\nrises after 2022",
+    hjust = 0,
+    size = 3,
+    color = bird_colors["Song Sparrow"],
+    lineheight = 1.1
+  ) +
+  
+  # adding Night-Heron annotation
+  annotate(
+    "text",
+    x = 2020,
+    y = 105,
+    label = "Night-Heron remains\ncomparatively low",
+    hjust = 0,
+    size = 3,
+    color = bird_colors["Black-crowned Night-Heron"],
+    lineheight = 1.1
+  ) +
+  
+  # adding direct labels at final year
+  geom_text(
+    data = end_labels,
+    mapping = aes(
+      x = year + 0.15,
+      y = total_abundance,
+      label = label,
+      color = species
+    ),
+    hjust = 0,
+    size = 3.2,
+    lineheight = 1.05,
+    show.legend = FALSE
+  ) +
+  
+  # assigning custom species colors
+  scale_color_manual(
+    values = bird_colors
+  ) +
+  
+  # customizing x-axis
+  scale_x_continuous(
+    breaks = c(2017, 2019, 2021, 2023, 2025),
+    limits = c(2017, 2027.2),
+    expand = expansion(mult = c(0.02, 0.18))
+  ) +
+  
+  # customizing y-axis
+  scale_y_continuous(
+    limits = c(0, 650),
+    breaks = seq(0, 600, by = 200),
+    expand = c(0, 0)
+  ) +
+  
+  # allowing labels to extend beyond plotting area
+  coord_cartesian(
+    clip = "off"
+  ) +
+  
+  # adding title, subtitle, and caption
+  labs(
+    title = paste0(
+      "<span style='color:#F4A932;'>Mallards,</span> ",
+      "<span style='color:#6A80A0;'>Sparrows,</span> ",
+      "<span style='color:#E8503A;'>& Herons</span>"
+    ),
+    
+    subtitle = paste0(
+      "Yearly abundance of three focal bird species\n",
+      "at NCOS · 2017–2025"
+    ),
+    
+    caption = "Source: NCOS bird monitoring data",
+    
+    x = NULL,
+    y = NULL
+  ) +
+  
+  # removing default theme
+  theme_void() +
+  
+  # customizing theme
+  theme(
+    plot.background = element_rect(
+      fill = bg_color,
+      color = NA
+    ),
+    
+    panel.background = element_rect(
+      fill = bg_color,
+      color = NA
+    ),
+    
+    plot.title = element_markdown(
+      size = 24,
+      face = "bold",
+      color = text_light,
+      margin = margin(b = 8)
+    ),
+    
+    plot.subtitle = element_text(
+      size = 10,
+      color = text_muted,
+      lineheight = 1.2,
+      margin = margin(b = 24)
+    ),
+    
+    plot.caption = element_text(
+      size = 7,
+      color = text_muted,
+      hjust = 1,
+      margin = margin(t = 12)
+    ),
+    
+    axis.text.x = element_text(
+      size = 9,
+      color = text_muted,
+      margin = margin(t = 6)
+    ),
+    
+    axis.text.y = element_text(
+      size = 9,
+      color = text_muted,
+      margin = margin(r = 6)
+    ),
+    
+    legend.position = "none",
+    
+    plot.margin = margin(
+      t = 20,
+      r = 80,
+      b = 18,
+      l = 20
+    )
+  )
+
+# showing final plot
+bird_plot
+```
+
+# 4. Describing my process
+
+As I am used to only modeling after the class material for my assignments, it was interesting to use someone else's code to create a visualization. I used copy and paste quite a bit when referencing Ponce's code. I also used generative AI to clarify my understanding of what Ponce was doing and had it assist me in modeling my code after his visualization.
+
+The biggest challenges I encountered as I made my visualization had to do with aesthetics. I really wanted my code to have a dark theme and look similar to Ponce's, which I have never done before. It was also difficult to add in annotations directly into the plot and get the spacing correct.
+
+My visualization differs from visualizations made in class mainly due to the geometries used and the use of annotations directly in the visualization.
