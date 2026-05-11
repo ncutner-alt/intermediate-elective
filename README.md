@@ -12,6 +12,7 @@ library(janitor)
 library(here)
 library(lubridate)
 library(ggtext)
+```
 
 ## Data and file information
 
@@ -27,6 +28,7 @@ library(ggtext)
 │   ├── bird-abundance-trends.png
 │   └── sketch.jpg
 └── intermediate-elective.Rproj
+```
 
 ### Data descriptions
 
