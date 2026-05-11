@@ -370,8 +370,8 @@ bird_plot
 
 # 4. Describing my process
 
-As I am used to only modeling after the class material for my assignments, it was interesting to use someone else's code to create a visualization. I used copy and paste quite a bit when referencing Ponce's code. I also used generative AI to clarify my understanding of what Ponce was doing and had it assist me in modeling my code after his visualization.
+As I am more accustomed to modeling visualizations after class material, it was interesting to adapt someone else’s code and design style for this assignment. I referenced and modified components of Steven Ponce’s code throughout the process, and I also used generative AI to better understand how certain aesthetic and annotation elements were constructed before adapting them to my own data set.
 
-The biggest challenges I encountered as I made my visualization had to do with aesthetics. I really wanted my code to have a dark theme and look similar to Ponce's, which I have never done before. It was also difficult to add in annotations directly into the plot and get the spacing correct.
+The biggest challenges I encountered while creating my visualization were related to aesthetics and layout. I wanted my figure to closely resemble Ponce’s dark editorial style, which required experimenting with custom colors, plot spacing, direct labels, and annotations that I had not previously used in class assignments.
 
-My visualization differs from visualizations made in class mainly due to the geometries used and the use of annotations directly in the visualization.
+My visualization differs from visualizations created in class mainly because of its storytelling-oriented design. Rather than focusing only on displaying data, this figure emphasizes annotations, direct labeling, custom styling, and visual hierarchy to communicate long-term trends across species.
