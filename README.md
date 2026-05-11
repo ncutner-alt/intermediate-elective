@@ -6,7 +6,7 @@ This repository contains data, code, and visualizations for the Intermediate Ele
 
 To work with the code in this repository, you will need the following packages:
 
-```
+```r
 library(tidyverse)
 library(janitor)
 library(here)
@@ -16,7 +16,7 @@ library(ggtext)
 
 ## Data and file information
 
-```
+```text
 .
 ├── README.md
 ├── code
@@ -30,6 +30,16 @@ library(ggtext)
 └── intermediate-elective.Rproj
 ```
 
+### Data descriptions
+
+- `birds copy.csv` contains NCOS bird monitoring observations used to calculate yearly bird abundance trends from 2017–2025.
+- `bird-abundance-trends.png` contains the final rendered visualization created for the assignment.
+- `sketch.jpg` contains the initial visualization planning sketch.
+
 ## Rendered output
 
-The rendered assignment for the code in this repository is [here](code/Cutner-Nina_Intermediate-elective-01.pdf).
+The rendered assignment for the code in this repository can be viewed [here](code/Cutner-Nina_Intermediate-elective-01.pdf).
+
+## Final visualization
+
+![](figures/bird-abundance-trends.png)
